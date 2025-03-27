@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useContext, useEffect, useState } from "react";
+import Login from "./components/Auth/Login";
+import EmployeeDashboard from "./components/Dashboard/EmployeeDashboard";
+import AdminDashboard from "./components/Dashboard/AdminDashboard";
+import { AuthContext } from "./context/AuthProvider";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [user, setUser] = useState(null);
+
+  const authData = useContext(AuthContext);
+  console.log(authData);
+
+  useEffect(() => {
+    if (authData) {
+      const loggedInUser = localStorage.getItem("loggedInUser");
+      if (loggedInUser) {
+        setUser(loggedInUser.role);
+      }
+    }
+  }, [authData]);
+
+  const handleLogin = (email, password) => {
+    if (email == "admin@me.com" && password == "123") {
+      setUser("admin");
+      localStorage.setItem("loggedInUser", JSON.stringify({ role: "admin" }));
+    } else if (
+      authData &&
+      authData.employees.find((e) => email == e.email && e.password == password)
+    ) {
+      setUser("employee");
+      localStorage.setItem(
+        "loggedInUser",
+        JSON.stringify({ role: "employee" })
+      );
+    } else {
+      alert("invalid credentials");
+    }
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {!user ? <Login handleLogin={handleLogin} /> : ""}
+      {user === "admin" ? <AdminDashboard /> : <EmployeeDashboard />}
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
