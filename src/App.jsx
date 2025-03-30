@@ -7,11 +7,10 @@ import { AuthContext } from "./context/AuthProvider";
 const App = () => {
   const [user, setUser] = useState(null);
   const [loggedInUserData, setLoggedInUserData] = useState(null);
-  const authData = useContext(AuthContext);
+  const [userData] = useContext(AuthContext);
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("loggedInUser");
-
     if (loggedInUser) {
       const userData = JSON.parse(loggedInUser);
       setUser(userData.role);
@@ -20,34 +19,48 @@ const App = () => {
   }, []);
 
   const handleLogin = (email, password) => {
-    if (email == "admin@me.com" && password == "123") {
-      setUser("admin");
-      localStorage.setItem("loggedInUser", JSON.stringify({ role: "admin" }));
-    } else if (authData) {
-      const employee = authData.employees.find(
-        (e) => email == e.email && e.password == password
+    let foundUser = null;
+
+    if (userData.admin) {
+      foundUser = userData.admin.find(
+        (e) => email === e.email && e.password === password
       );
-      if (employee) {
-        setUser("employee");
-        setLoggedInUserData(employee);
-        localStorage.setItem(
-          "loggedInUser",
-          JSON.stringify({ role: "employee", data: employee })
-        );
-      }
+    }
+
+    if (!foundUser && userData.employees) {
+      foundUser = userData.employees.find(
+        (e) => email === e.email && e.password === password
+      );
+    }
+
+    if (foundUser) {
+      const role = userData.admin.includes(foundUser) ? "admin" : "employee";
+      setUser(role);
+      setLoggedInUserData(foundUser);
+      localStorage.setItem(
+        "loggedInUser",
+        JSON.stringify({ role, data: foundUser })
+      );
     } else {
-      alert("invalid credentials");
+      alert("Invalid credentials");
     }
   };
 
   return (
     <>
-      {!user ? <Login handleLogin={handleLogin} /> : ""}
       {user === "admin" ? (
-        <AdminDashboard />
-      ) : user == "employee" ? (
-        <EmployeeDashboard data={loggedInUserData} />
-      ) : null}
+        <AdminDashboard
+          changeUser={setUser}
+          loggedInUserData={loggedInUserData}
+        />
+      ) : user === "employee" ? (
+        <EmployeeDashboard
+          changeUser={setUser}
+          loggedInUserData={loggedInUserData}
+        />
+      ) : (
+        <Login handleLogin={handleLogin} />
+      )}
     </>
   );
 };

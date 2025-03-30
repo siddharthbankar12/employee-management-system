@@ -1,34 +1,75 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../context/AuthProvider";
 
 const CreateTask = () => {
-  const [taskList, setTaskList] = useState([]);
+  const [userData, setUserData] = useContext(AuthContext);
 
-  const [task, setTask] = useState({
+  const [assignTo, setAssignTo] = useState({ firstName: "" });
+
+  const [taskDetail, setTaskDetail] = useState({
     title: "",
     description: "",
     date: "",
-    assignTo: "",
     category: "",
+    active: false,
+    newTask: true,
+    completed: false,
+    failed: false,
   });
 
   const submitHandler = (e) => {
     e.preventDefault();
 
-    setTaskList([...taskList, task]);
+    const capitalizeWords = (str) => {
+      return str
+        .toLowerCase()
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    };
 
-    setTask({
+    const updatedAssignTo = { firstName: capitalizeWords(assignTo.firstName) };
+    const updatedTaskDetail = { ...taskDetail };
+
+    const updatedUserData = userData.employees.map((elem) => {
+      if (updatedAssignTo.firstName === elem.firstName) {
+        return {
+          ...elem,
+          tasks: [...elem.tasks, updatedTaskDetail],
+          taskCount: {
+            ...elem.taskCount,
+            newTask: elem.taskCount.newTask + 1,
+          },
+        };
+      }
+      return elem;
+    });
+
+    console.log(updatedUserData);
+
+    setUserData({ ...userData, employees: updatedUserData });
+
+    setAssignTo({ firstName: "" });
+    setTaskDetail({
       title: "",
       description: "",
       date: "",
-      assignTo: "",
       category: "",
+      active: false,
+      newTask: true,
+      completed: false,
+      failed: false,
     });
   };
 
-  // console.log(taskList);
-
   const onChangeHandler = (e) => {
-    setTask({ ...task, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "assignTo") {
+      setAssignTo({ firstName: value });
+    } else {
+      setTaskDetail((prevTask) => ({ ...prevTask, [name]: value }));
+    }
   };
 
   return (
@@ -43,7 +84,7 @@ const CreateTask = () => {
               Task Title
             </h3>
             <input
-              value={task.title}
+              value={taskDetail.title}
               name="title"
               onChange={onChangeHandler}
               className="text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4"
@@ -54,7 +95,7 @@ const CreateTask = () => {
           <div>
             <h3 className="text-sm text-gray-300 mb-0.5 font-bold">Date</h3>
             <input
-              value={task.date}
+              value={taskDetail.date}
               name="date"
               onChange={onChangeHandler}
               className="text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4"
@@ -66,7 +107,7 @@ const CreateTask = () => {
               Assign to
             </h3>
             <input
-              value={task.assignTo}
+              value={assignTo.firstName}
               name="assignTo"
               onChange={onChangeHandler}
               className="text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4"
@@ -77,7 +118,7 @@ const CreateTask = () => {
           <div>
             <h3 className="text-sm text-gray-300 mb-0.5 font-bold">Category</h3>
             <input
-              value={task.category}
+              value={taskDetail.category}
               name="category"
               onChange={onChangeHandler}
               className="text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4"
@@ -92,7 +133,7 @@ const CreateTask = () => {
             Description
           </h3>
           <textarea
-            value={task.description}
+            value={taskDetail.description}
             name="description"
             onChange={onChangeHandler}
             className="text-sm py-2 px-4 w-full h-44 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4"

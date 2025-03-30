@@ -1,25 +1,28 @@
-import React, { useState } from "react";
-import { setLocalStorage } from "../../utils/localStorage";
+import React, { useEffect, useState } from "react";
 
-const Header = ({ data }) => {
-  // const [username, setUsername] = useState("");
-
-  // if (!data) {
-  //   setUsername("Admin");
-  // } else {
-  //   setUsername(data.firstName);
-  // }
+const Header = (props) => {
+  const [userName, setUserName] = useState(null);
 
   const logOutUser = () => {
-    localStorage.setItem("loggedInUser", "");
-    window.location.reload();
+    localStorage.removeItem("loggedInUser");
+    setUserName(null);
+    props.changeUser(null);
   };
+
+  useEffect(() => {
+    if (props.loggedInUserData) {
+      setUserName(props.loggedInUserData.adminName) ||
+        setUserName(props.loggedInUserData.firstName);
+    }
+  }, [props.loggedInUserData]);
+
+  // console.log(userName);
 
   return (
     <div className="flex justify-between items-end">
       <h1 className="text-2xl font-medium">
         Hello <br />
-        <span className="text-3xl font-semibold">username👋</span>
+        <span className="text-3xl font-semibold">{userName}👋</span>
       </h1>
       <button
         onClick={logOutUser}
