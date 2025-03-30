@@ -10,13 +10,10 @@ const Header = (props) => {
   };
 
   useEffect(() => {
-    if (props.loggedInUserData) {
-      setUserName(props.loggedInUserData.adminName) ||
-        setUserName(props.loggedInUserData.firstName);
+    if (props.data) {
+      setUserName(props.data.adminName || props.data.firstName);
     }
-  }, [props.loggedInUserData]);
-
-  // console.log(userName);
+  }, [props.data]);
 
   return (
     <div className="flex justify-between items-end">
