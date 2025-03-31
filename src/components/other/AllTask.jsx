@@ -9,10 +9,10 @@ const AllTask = () => {
       <div className="bg-red-400 mb-2 py-2 px-4 flex justify-between rounded">
         <h5 className="w-1/5 text-black font-bold">Employee Name</h5>
         <h5 className="w-1/5 text-black font-bold text-center">New Task</h5>
+        <h5 className="w-1/5 text-black font-bold text-center">Active Task</h5>
         <h5 className="w-1/5 text-black font-bold text-center">
           Completed Task
         </h5>
-        <h5 className="w-1/5 text-black font-bold text-center">Active Task</h5>
         <h5 className="w-1/5 text-black font-bold text-center">Failed Task</h5>
       </div>
 
@@ -27,12 +27,13 @@ const AllTask = () => {
               <h3 className="w-1/5 text-blue-600 font-bold text-center">
                 {elem.taskCount.newTask}
               </h3>
-              <h3 className="w-1/5 text-green-600 font-bold text-center">
-                {elem.taskCount.completed}
-              </h3>
               <h3 className="w-1/5 text-yellow-600 font-bold text-center">
                 {elem.taskCount.active}
               </h3>
+              <h3 className="w-1/5 text-green-600 font-bold text-center">
+                {elem.taskCount.completed}
+              </h3>
+
               <h3 className="w-1/5 text-red-600 font-bold text-center">
                 {elem.taskCount.failed}
               </h3>

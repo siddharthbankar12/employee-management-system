@@ -7,26 +7,26 @@ const TaskListNumbers = ({ data }) => {
         <h2 className="text-3xl font-semibold">
           {data.taskCount.newTask || 0}
         </h2>
-        <h3 className="text-xl font-medium">New Task</h3>
+        <h3 className="text-xl font-medium">New Tasks</h3>
       </div>
 
       <div className="rounded-xl py-6 px-9 w-[45%] bg-green-400">
         <h2 className="text-3xl font-semibold">
           {data.taskCount.completed || 0}
         </h2>
-        <h3 className="text-xl font-medium">Complete Task</h3>
+        <h3 className="text-xl font-medium">Complete Tasks</h3>
       </div>
 
       <div className="rounded-xl py-6 px-9 w-[45%] bg-yellow-400">
         <h2 className="text-3xl text-black font-semibold">
           {data.taskCount.active || 0}
         </h2>
-        <h3 className="text-black text-xl font-medium">Accept Task</h3>
+        <h3 className="text-black text-xl font-medium">Active Tasks</h3>
       </div>
 
       <div className="rounded-xl py-6 px-9 w-[45%] bg-red-400">
         <h2 className="text-3xl font-semibold">{data.taskCount.failed || 0}</h2>
-        <h3 className="text-xl font-medium">Failed Task</h3>
+        <h3 className="text-xl font-medium">Failed Tasks</h3>
       </div>
     </div>
   );

@@ -31,6 +31,20 @@ const CreateTask = () => {
     const updatedAssignTo = { firstName: capitalizeWords(assignTo.firstName) };
     const updatedTaskDetail = { ...taskDetail };
 
+    const employeeExists = userData.employees.some(
+      (emp) => emp.firstName === updatedAssignTo.firstName
+    );
+
+    if (!employeeExists) {
+      alert("Employee not in database");
+      return;
+    }
+
+    if (!taskDetail.title) {
+      alert("Enter Title");
+      return;
+    }
+
     const updatedUserData = userData.employees.map((elem) => {
       if (updatedAssignTo.firstName === elem.firstName) {
         return {
@@ -42,10 +56,11 @@ const CreateTask = () => {
           },
         };
       }
+
       return elem;
     });
 
-    console.log(updatedUserData);
+    // console.log(updatedUserData);
 
     setUserData({ ...userData, employees: updatedUserData });
 
@@ -89,7 +104,7 @@ const CreateTask = () => {
               onChange={onChangeHandler}
               className="text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4"
               type="text"
-              placeholder="Make a UI design"
+              placeholder="Provide a Title"
             />
           </div>
           <div>
@@ -112,7 +127,7 @@ const CreateTask = () => {
               onChange={onChangeHandler}
               className="text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4"
               type="text"
-              placeholder="employee name"
+              placeholder="Enter Employee Name"
             />
           </div>
           <div>
@@ -123,7 +138,7 @@ const CreateTask = () => {
               onChange={onChangeHandler}
               className="text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4"
               type="text"
-              placeholder="design, dev, etc"
+              placeholder="Design, Development, etc"
             />
           </div>
         </div>
@@ -136,6 +151,7 @@ const CreateTask = () => {
             value={taskDetail.description}
             name="description"
             onChange={onChangeHandler}
+            placeholder="Describe the task"
             className="text-sm py-2 px-4 w-full h-44 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4"
             id=""
           ></textarea>

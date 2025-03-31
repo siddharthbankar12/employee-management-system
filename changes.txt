@@ -1,1 +1,0 @@
-change forms submit and onchange functions, combine into one state 

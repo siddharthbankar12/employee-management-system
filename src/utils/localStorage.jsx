@@ -10,8 +10,8 @@ const employeesLocal = [
         description: "Resolve the login bug in the authentication module.",
         date: "2025-03-27",
         category: "Bug Fixing",
-        active: true,
-        newTask: false,
+        active: false,
+        newTask: true,
         completed: false,
         failed: false,
       },
@@ -31,12 +31,11 @@ const employeesLocal = [
         date: "2025-03-28",
         category: "Database",
         active: true,
-        newTask: true,
+        newTask: false,
         completed: false,
         failed: false,
       },
     ],
-    taskCount: { active: 2, newTask: 1, completed: 1, failed: 0 },
   },
   {
     id: 2,
@@ -60,12 +59,11 @@ const employeesLocal = [
         date: "2025-03-29",
         category: "Security",
         active: true,
-        newTask: true,
+        newTask: false,
         completed: false,
         failed: false,
       },
     ],
-    taskCount: { active: 1, newTask: 1, completed: 1, failed: 0 },
   },
   {
     id: 3,
@@ -98,13 +96,12 @@ const employeesLocal = [
         description: "Reduce bundle size for faster page loads.",
         date: "2025-03-30",
         category: "Performance",
-        active: true,
+        active: false,
         newTask: true,
         completed: false,
         failed: false,
       },
     ],
-    taskCount: { active: 2, newTask: 1, completed: 1, failed: 0 },
   },
   {
     id: 4,
@@ -137,13 +134,12 @@ const employeesLocal = [
         description: "Improve code readability and maintainability.",
         date: "2025-03-29",
         category: "Refactoring",
-        active: true,
+        active: false,
         newTask: true,
         completed: false,
         failed: false,
       },
     ],
-    taskCount: { active: 2, newTask: 1, completed: 1, failed: 0 },
   },
   {
     id: 5,
@@ -182,7 +178,6 @@ const employeesLocal = [
         failed: false,
       },
     ],
-    taskCount: { active: 2, newTask: 1, completed: 0, failed: 0 },
   },
 ];
 
@@ -201,11 +196,30 @@ const adminLocal = [
   },
 ];
 
+const updateTaskCounts = (data) => {
+  return data.map((employeesData) => {
+    const taskCount = {
+      active: 0,
+      newTask: 0,
+      completed: 0,
+      failed: 0,
+    };
+
+    employeesData.tasks.forEach((task) => {
+      if (task.active) taskCount.active++;
+      if (task.newTask) taskCount.newTask++;
+      if (task.completed) taskCount.completed++;
+      if (task.failed) taskCount.failed++;
+    });
+
+    return { ...employeesData, taskCount };
+  });
+};
+
 export const setLocalStorage = (employees, admin) => {
-  localStorage.setItem(
-    "employees",
-    JSON.stringify(employees || employeesLocal)
-  );
+  const updatedEmployees = updateTaskCounts(employees || employeesLocal);
+
+  localStorage.setItem("employees", JSON.stringify(updatedEmployees));
   localStorage.setItem("admin", JSON.stringify(admin || adminLocal));
 };
 
@@ -214,4 +228,34 @@ export const getLocalStorage = () => {
   const adminList = JSON.parse(localStorage.getItem("admin"));
 
   return { employeesList, adminList };
+};
+
+export const updatedUserLocalStorage = (employees) => {
+  if (employees.data.tasks) {
+    const updateTaskCounts = (data) => {
+      const taskCount = {
+        active: 0,
+        newTask: 0,
+        completed: 0,
+        failed: 0,
+      };
+
+      data.tasks.forEach((task) => {
+        if (task.active) taskCount.active++;
+        if (task.newTask) taskCount.newTask++;
+        if (task.completed) taskCount.completed++;
+        if (task.failed) taskCount.failed++;
+      });
+
+      return { ...data, taskCount };
+    };
+
+    const updatedEmployees = updateTaskCounts(employees.data);
+    localStorage.setItem(
+      "loggedInUser",
+      JSON.stringify({ role: employees.role, data: updatedEmployees })
+    );
+  } else {
+    console.error("Invalid employee data or missing tasks", employees);
+  }
 };
